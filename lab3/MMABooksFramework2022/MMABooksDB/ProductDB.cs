@@ -14,24 +14,29 @@ using DBParameter = MySql.Data.MySqlClient.MySqlParameter;
 using DBDataReader = MySql.Data.MySqlClient.MySqlDataReader;
 using DBDataAdapter = MySql.Data.MySqlClient.MySqlDataAdapter;
 using DBDbType = MySql.Data.MySqlClient.MySqlDbType;
+using System.Collections.Generic;
 
 namespace MMABooksDB
 {
-    public class StateDB : DBBase, IReadDB, IWriteDB
+    public class ProductDB : DBBase, IReadDB, IWriteDB
     {
-        public StateDB() : base() { }
-        public StateDB(DBConnection cn) : base(cn) { }
+
+        public ProductDB() : base() { }
+        public ProductDB(DBConnection cn) : base(cn) { }
 
         public IBaseProps Create(IBaseProps p)
         {
             int rowsAffected = 0;
-            StateProps props = (StateProps)p;
+            ProductProps props = (ProductProps)p;
 
             DBCommand command = new DBCommand();
-            command.CommandText = "usp_StateCreate";
+            command.CommandText = "usp_ProductCreate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("code", props.Code);
-            command.Parameters.AddWithValue("name", props.Name);
+            command.Parameters.AddWithValue("ProductCode", props.ProductCode);
+            command.Parameters.AddWithValue("Description", props.Description);
+            command.Parameters.AddWithValue("UnitPrice", props.UnitPrice);
+            command.Parameters.AddWithValue("OnHandQuantity", props.OnHandQuantity);
+    
 
             try
             {
@@ -58,15 +63,15 @@ namespace MMABooksDB
 
         public bool Delete(IBaseProps p)
         {
-            StateProps props = (StateProps)p;
+            ProductProps props = (ProductProps)p;
             int rowsAffected = 0;
 
             DBCommand command = new DBCommand();
-            command.CommandText = "usp_StateDelete";
+            command.CommandText = "usp_ProductDelete";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("code", DBDbType.VarChar);
+            command.Parameters.Add("ProductCode", DBDbType.VarChar);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
-            command.Parameters["code"].Value = props.Code;
+            command.Parameters["ProductCode"].Value = props.ProductCode;
             command.Parameters["conCurrId"].Value = props.ConcurrencyID;
 
             try
@@ -98,13 +103,13 @@ namespace MMABooksDB
         public IBaseProps Retrieve(object key)
         {
             DBDataReader data = null;
-            StateProps props = new StateProps();
+            ProductProps props = new ProductProps();
             DBCommand command = new DBCommand();
 
-            command.CommandText = "usp_StateSelect";
+            command.CommandText = "usp_ProductSelect";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("code", DBDbType.VarChar);
-            command.Parameters["code"].Value = key.ToString();
+            command.Parameters.Add("ProductCode", DBDbType.VarChar);
+            command.Parameters["ProductCode"].Value = key.ToString();
 
             try
             {
@@ -137,18 +142,18 @@ namespace MMABooksDB
 
         public object RetrieveAll()
         {
-            List<StateProps> list = new List<StateProps>();
+            List<ProductProps> list = new List<ProductProps>();
             DBDataReader reader = null;
-            StateProps props;
+            ProductProps props;
 
             try
             {
-                reader = RunProcedure("usp_StateSelectAll");
+                reader = RunProcedure("usp_ProductSelectAll");
                 if (!reader.IsClosed)
                 {
                     while (reader.Read())
                     {
-                        props = new StateProps();
+                        props = new ProductProps();
                         props.SetState(reader);
                         list.Add(props);
                     }
@@ -172,16 +177,20 @@ namespace MMABooksDB
         public bool Update(IBaseProps p)
         {
             int rowsAffected = 0;
-            StateProps props = (StateProps)p;
+            ProductProps props = (ProductProps)p;
 
             DBCommand command = new DBCommand();
             command.CommandText = "usp_StateUpdate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("code", DBDbType.VarChar);
-            command.Parameters.Add("name", DBDbType.VarChar);
+            command.Parameters.Add("ProductCode", DBDbType.VarChar);
+            command.Parameters.Add("Description", DBDbType.VarChar);
+            command.Parameters.Add("UnitPrice", DBDbType.Decimal);
+            command.Parameters.Add("OnHandQuantity", DBDbType.Int32);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
-            command.Parameters["code"].Value = props.Code;
-            command.Parameters["name"].Value = props.Name;
+            command.Parameters["ProductCode"].Value = props.ProductCode;
+            command.Parameters["Description"].Value = props.Description;
+            command.Parameters["UnitPrice"].Value = props.UnitPrice;
+            command.Parameters["OnHandQuantity"].Value = props.OnHandQuantity;
             command.Parameters["conCurrId"].Value = props.ConcurrencyID;
 
             try

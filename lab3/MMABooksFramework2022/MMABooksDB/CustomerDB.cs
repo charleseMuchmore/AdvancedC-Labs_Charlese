@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using MMABooksTools;
 using MMABooksProps;
@@ -19,9 +17,10 @@ using DBDbType = MySql.Data.MySqlClient.MySqlDbType;
 
 namespace MMABooksDB
 {
-    public class CustomerDB
+    public class CustomerDB : DBBase, IReadDB, IWriteDB
     {
-        /*
+        public CustomerDB() : base() { }
+        public CustomerDB(DBConnection cn) : base(cn) { }
         public IBaseProps Create(IBaseProps p)
         {
             int rowsAffected = 0;
@@ -30,29 +29,28 @@ namespace MMABooksDB
             DBCommand command = new DBCommand();
             command.CommandText = "usp_CustomerCreate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("custId", DBDbType.Int32);
-            command.Parameters.Add("name_p", DBDbType.VarChar);
-            ... there are more parameters here
-            command.Parameters[0].Direction = ParameterDirection.Output;
-            command.Parameters["name_p"].Value = props.Name;
-            ... and more values here
+            command.Parameters.AddWithValue("custId", props.CustomerId);
+            command.Parameters.AddWithValue("name_p", props.Name);
+            command.Parameters.AddWithValue("address_p", props.Address);
+            command.Parameters.AddWithValue("city_p", props.City);
+            command.Parameters.AddWithValue("state_p", props.State);
+            command.Parameters.AddWithValue("zipcode_p", props.ZipCode);
 
             try
             {
                 rowsAffected = RunNonQueryProcedure(command);
                 if (rowsAffected == 1)
                 {
-                    props.CustomerID = (int)command.Parameters[0].Value;
                     props.ConcurrencyID = 1;
                     return props;
                 }
                 else
-                    throw new Exception("Unable to insert record. " + props.ToString());
+                    throw new Exception("Unable to insert record. " + props.GetState());
             }
             catch (Exception e)
             {
                 // log this error
-                throw;
+                throw e;
             }
             finally
             {
@@ -60,6 +58,169 @@ namespace MMABooksDB
                     mConnection.Close();
             }
         }
-         */
+
+        public bool Delete(IBaseProps p)
+        {
+            CustomerProps props = (CustomerProps)p;
+            int rowsAffected = 0;
+
+            DBCommand command = new DBCommand();
+            command.CommandText = "usp_CustomerDelete";
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("custId", DBDbType.Int32);
+            command.Parameters.Add("conCurrId", DBDbType.Int32);
+            command.Parameters["custId"].Value = props.CustomerId;
+            command.Parameters["conCurrId"].Value = props.ConcurrencyID;
+
+            try
+            {
+                rowsAffected = RunNonQueryProcedure(command);
+                if (rowsAffected == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    string message = "Record cannot be deleted. It has been edited by another user.";
+                    throw new Exception(message);
+                }
+
+            }
+            catch (Exception e)
+            {
+                // log this exception
+                throw e;
+            }
+            finally
+            {
+                if (mConnection.State == ConnectionState.Open)
+                    mConnection.Close();
+            }
+        }
+
+        public IBaseProps Retrieve(object key)
+        {
+            DBDataReader data = null;
+            CustomerProps props = new CustomerProps();
+            DBCommand command = new DBCommand();
+
+            command.CommandText = "usp_CustomerSelect";
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("custId", DBDbType.Int32);
+            command.Parameters["custId"].Value = key.ToString();
+
+            try
+            {
+                data = RunProcedure(command);
+                if (!data.IsClosed)
+                {
+                    if (data.Read())
+                    {
+                        props.SetState(data);
+                    }
+                    else
+                        throw new Exception("Record does not exist in the database.");
+                }
+                return props;
+            }
+            catch (Exception e)
+            {
+                // log this exception
+                throw e;
+            }
+            finally
+            {
+                if (data != null)
+                {
+                    if (!data.IsClosed)
+                        data.Close();
+                }
+            }
+        }
+
+        public object RetrieveAll()
+        {
+            List<CustomerProps> list = new List<CustomerProps>();
+            DBDataReader reader = null;
+            CustomerProps props;
+
+            try
+            {
+                reader = RunProcedure("usp_CustomerSelectAll");
+                if (!reader.IsClosed)
+                {
+                    while (reader.Read())
+                    {
+                        props = new CustomerProps();
+                        props.SetState(reader);
+                        list.Add(props);
+                    }
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                // log this exception
+                throw e;
+            }
+            finally
+            {
+                if (!reader.IsClosed)
+                {
+                    reader.Close();
+                }
+            }
+        }
+
+        public bool Update(IBaseProps p)
+        {
+            int rowsAffected = 0;
+            CustomerProps props = (CustomerProps)p;
+
+            DBCommand command = new DBCommand();
+            command.CommandText = "usp_CustomerUpdate";
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("customerId", DBDbType.Int32);
+            command.Parameters.Add("name", DBDbType.VarChar);
+            command.Parameters.Add("address", DBDbType.VarChar);
+            command.Parameters.Add("city", DBDbType.VarChar);
+            command.Parameters.Add("state", DBDbType.VarChar);
+            command.Parameters.Add("zipcode", DBDbType.VarChar);
+            command.Parameters.Add("conCurrId", DBDbType.Int32);
+
+            command.Parameters["customerId"].Value = props.CustomerId;
+            command.Parameters["name"].Value = props.Name;
+            command.Parameters["address"].Value = props.Address;
+            command.Parameters["city"].Value = props.City;
+            command.Parameters["state"].Value = props.State;
+            command.Parameters["zipcode"].Value = props.ZipCode;
+            command.Parameters["conCurrId"].Value = props.ConcurrencyID;
+
+            try
+            {
+                rowsAffected = RunNonQueryProcedure(command);
+                if (rowsAffected == 1)
+                {
+                    props.ConcurrencyID++;
+                    return true;
+                }
+                else
+                {
+                    string message = "Record cannot be updated. It has been edited by another user.";
+                    throw new Exception(message);
+                }
+            }
+            catch (Exception e)
+            {
+                // log this exception
+                throw e;
+            }
+            finally
+            {
+                if (mConnection.State == ConnectionState.Open)
+                    mConnection.Close();
+            }
+        }
     }
 }

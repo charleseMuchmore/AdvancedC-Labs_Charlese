@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using MMABooksProps;
 using MMABooksDB;
@@ -13,14 +13,14 @@ using MySql.Data.MySqlClient;
 namespace MMABooksTests
 {
     [TestFixture]
-    public class StateDBTests
+    internal class ProductDBTests
     {
-        StateDB db;
+        ProductDB db;
 
         [SetUp]
         public void ResetData()
         {
-            db = new StateDB();
+            db = new ProductDB();
             DBCommand command = new DBCommand();
             command.CommandText = "usp_testingResetData";
             command.CommandType = CommandType.StoredProcedure;
@@ -30,68 +30,68 @@ namespace MMABooksTests
         [Test]
         public void TestRetrieve()
         {
-            StateProps p = (StateProps)db.Retrieve("OR");
-            Assert.AreEqual("OR", p.Code);
-            Assert.AreEqual("Ore", p.Name);
+            ProductProps p = (ProductProps)db.Retrieve(2177);
+            Assert.AreEqual(2177, p.ProductId);
+            Assert.AreEqual("A4CS", p.ProductCode);
         }
 
         [Test]
         public void TestRetrieveAll()
         {
-            List<StateProps> list = (List<StateProps>)db.RetrieveAll();
-            Assert.AreEqual(53, list.Count);
+            List<ProductProps> list = (List<ProductProps>)db.RetrieveAll();
+            Assert.AreEqual(696, list.Count);
         }
 
         [Test]
         public void TestDelete()
         {
-            StateProps p = (StateProps)db.Retrieve("HI");
+            ProductProps p = (ProductProps)db.Retrieve(2177);
             Assert.True(db.Delete(p));
-            Assert.Throws<Exception>(() => db.Retrieve("HI"));
+            Assert.Throws<Exception>(() => db.Retrieve(2177));
         }
+
 
         [Test]
         public void TestDeleteForeignKeyConstraint()
         {
-            StateProps p = (StateProps)db.Retrieve("OR");
+            ProductProps p = (ProductProps)db.Retrieve(2177);
             Assert.Throws<MySqlException>(() => db.Delete(p));
         }
 
         [Test]
         public void TestUpdate()
         {
-            StateProps p = (StateProps)db.Retrieve("OR");
-            p.Name = "Oregon";
+            ProductProps p = (ProductProps)db.Retrieve(2177);
+            p.ProductCode = "A4CS";
             Assert.True(db.Update(p));
-            p = (StateProps)db.Retrieve("OR");
-            Assert.AreEqual("Oregon", p.Name);
+            p = (ProductProps)db.Retrieve(2177);
+            Assert.AreEqual("A4CS", p.ProductCode);
         }
 
         [Test]
         public void TestUpdateFieldTooLong()
         {
-            StateProps p = (StateProps)db.Retrieve("OR");
-            p.Name = "Oregon is the state where Crater Lake National Park is.";
+            ProductProps p = (ProductProps)db.Retrieve(2177);
+            p.ProductCode = "Oregon is the state where Crater Lake National Park is.";
             Assert.Throws<MySqlException>(() => db.Update(p));
         }
 
         [Test]
         public void TestCreate()
         {
-            StateProps p = new StateProps();
-            p.Code = "??";
-            p.Name = "Where am I";
+            ProductProps p = new ProductProps();
+            p.ProductCode = "ABCD";
             db.Create(p);
-            StateProps p2 = (StateProps)db.Retrieve(p.Code);
+            ProductProps p2 = (ProductProps)db.Retrieve(p.ProductCode);
             Assert.AreEqual(p.GetState(), p2.GetState());
         }
 
         [Test]
         public void TestCreatePrimaryKeyViolation()
         {
-            StateProps p = new StateProps();
-            p.Code = "OR";
-            p.Name = "Oregon";
+            ProductProps p = new ProductProps();
+            p.ProductId = 2177;
+            p.ProductCode = "A4CS";
             Assert.Throws<MySqlException>(() => db.Create(p));
         }
     }
