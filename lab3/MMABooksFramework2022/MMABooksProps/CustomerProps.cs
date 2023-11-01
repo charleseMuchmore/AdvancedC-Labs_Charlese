@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 using MMABooksTools;
 using DBDataReader = MySql.Data.MySqlClient.MySqlDataReader;
@@ -12,6 +14,7 @@ namespace MMABooksProps
     [Serializable()]
     public class CustomerProps : IBaseProps
     {
+        //properties for the customer
         #region Auto-implemented Properties
         public int CustomerId { get; set; } = 0;
 

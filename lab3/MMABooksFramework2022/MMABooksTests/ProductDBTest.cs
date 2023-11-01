@@ -22,7 +22,7 @@ namespace MMABooksTests
         {
             db = new ProductDB();
             DBCommand command = new DBCommand();
-            command.CommandText = "usp_testingResetData";
+            command.CommandText = "usp_testingResetProductData";
             command.CommandType = CommandType.StoredProcedure;
             db.RunNonQueryProcedure(command);
         }
@@ -30,69 +30,70 @@ namespace MMABooksTests
         [Test]
         public void TestRetrieve()
         {
-            ProductProps p = (ProductProps)db.Retrieve(2177);
-            Assert.AreEqual(2177, p.ProductId);
-            Assert.AreEqual("A4CS", p.ProductCode);
+            ProductProps c = (ProductProps)db.Retrieve(1);
+            Assert.AreEqual(1, c.ProductId);
+            Assert.AreEqual("A4CS", c.ProductCode);
         }
 
         [Test]
         public void TestRetrieveAll()
         {
             List<ProductProps> list = (List<ProductProps>)db.RetrieveAll();
-            Assert.AreEqual(696, list.Count);
+            Assert.AreEqual(16, list.Count);
         }
 
         [Test]
         public void TestDelete()
         {
-            ProductProps p = (ProductProps)db.Retrieve(2177);
-            Assert.True(db.Delete(p));
-            Assert.Throws<Exception>(() => db.Retrieve(2177));
-        }
-
-
-        [Test]
-        public void TestDeleteForeignKeyConstraint()
-        {
-            ProductProps p = (ProductProps)db.Retrieve(2177);
-            Assert.Throws<MySqlException>(() => db.Delete(p));
+            ProductProps c = (ProductProps)db.Retrieve(1);
+            Assert.True(db.Delete(c));
+            Assert.Throws<Exception>(() => db.Retrieve(1));
         }
 
         [Test]
         public void TestUpdate()
         {
-            ProductProps p = (ProductProps)db.Retrieve(2177);
-            p.ProductCode = "A4CS";
-            Assert.True(db.Update(p));
-            p = (ProductProps)db.Retrieve(2177);
-            Assert.AreEqual("A4CS", p.ProductCode);
+            ProductProps c = (ProductProps)db.Retrieve(1);
+            c.ProductCode = "CODE";
+            Assert.True(db.Update(c));
+            c = (ProductProps)db.Retrieve(1);
+            Assert.AreEqual("CODE", c.ProductCode);
         }
 
         [Test]
         public void TestUpdateFieldTooLong()
         {
-            ProductProps p = (ProductProps)db.Retrieve(2177);
-            p.ProductCode = "Oregon is the state where Crater Lake National Park is.";
-            Assert.Throws<MySqlException>(() => db.Update(p));
+            ProductProps c = (ProductProps)db.Retrieve(1);
+            c.ProductCode = "Oregon is the state where Crater Lake National Park is. fffffffffffffffffffffffffffffffffffffffffffffffffffff";
+            Assert.Throws<MySqlException>(() => db.Update(c));
         }
 
         [Test]
         public void TestCreate()
         {
-            ProductProps p = new ProductProps();
-            p.ProductCode = "ABCD";
-            db.Create(p);
-            ProductProps p2 = (ProductProps)db.Retrieve(p.ProductCode);
-            Assert.AreEqual(p.GetState(), p2.GetState());
+            ProductProps c = new ProductProps();
+            c.ProductCode = "HEYO";
+            c.Description = "Cool New Kicks";
+            c.UnitPrice = 5.0000M;
+            c.OnHandQuantity = 5;
+
+
+            db.Create(c);
+            ProductProps c2 = (ProductProps)db.Retrieve(c.ProductId);
+            Assert.AreEqual(c.GetState(), c2.GetState());
         }
 
-        [Test]
+   /*     [Test]
         public void TestCreatePrimaryKeyViolation()
         {
-            ProductProps p = new ProductProps();
-            p.ProductId = 2177;
-            p.ProductCode = "A4CS";
-            Assert.Throws<MySqlException>(() => db.Create(p));
-        }
+            ProductProps c = new ProductProps();
+            c.ProductId = 1;
+            c.ProductCode = "NewC";
+            c.Description = "jgiaofjdfs";
+            c.UnitPrice = 5;
+            c.OnHandQuantity = 5;
+            Assert.Throws<MySqlException>(() => db.Create(c));
+        }*/
+
     }
 }

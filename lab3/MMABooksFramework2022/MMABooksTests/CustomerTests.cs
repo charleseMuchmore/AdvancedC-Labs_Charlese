@@ -22,7 +22,7 @@ namespace MMABooksTests
         {
             CustomerDB db = new CustomerDB();
             DBCommand command = new DBCommand();
-            command.CommandText = "usp_testingResetStateData";
+            command.CommandText = "usp_testingResetCustomer1Data";
             command.CommandType = CommandType.StoredProcedure;
             db.RunNonQueryProcedure(command);
         }
@@ -32,19 +32,19 @@ namespace MMABooksTests
         {
             // not in Data Store - no code
             Customer c = new Customer();
-            Assert.AreEqual(string.Empty, c.Id);
             Assert.AreEqual(string.Empty, c.Name);
+            Assert.AreEqual(string.Empty, c.Address);
             Assert.IsTrue(c.IsNew);
             Assert.IsFalse(c.IsValid);
         }
-
 
         [Test]
         public void TestRetrieveFromDataStoreContructor()
         {
             // retrieves from Data Store
-            Customer c = new Customer("Lindy Stewart");
-            Assert.AreEqual("Lindy Stewart", c.Id);
+            Customer c = new Customer(1);
+            Assert.AreEqual("Molunguri, A", c.Name);
+            Assert.AreEqual("1108 Johanna Bay Drive", c.Address);
             Assert.IsTrue(c.Name.Length > 0);
             Assert.IsFalse(c.IsNew);
             Assert.IsTrue(c.IsValid);
@@ -53,32 +53,32 @@ namespace MMABooksTests
         [Test]
         public void TestSaveToDataStore()
         {
-            Customer c = new Customer();
+            Customer c = new Customer(1);
             c.Name = "This is a new Name";
             c.Save();
-            Customer c2 = new Customer("This is a new Name");
+            Customer c2 = new Customer(1);
             Assert.AreEqual(c2.Name, c.Name);
         }
 
         [Test]
         public void TestUpdate()
         {
-            Customer c = new Customer("Brian Bird");
+            Customer c = new Customer(4);
             c.Name = "Edited Name";
             c.Save();
 
-            Customer c2 = new Customer("Brian Bird");
-            Assert.AreEqual(c2.Id, c.Id);
+            Customer c2 = new Customer(4);
+            Assert.AreEqual(c2.CustomerId, c.CustomerId);
             Assert.AreEqual(c2.Name, c.Name);
         }
 
         [Test]
         public void TestDelete()
         {
-            Customer c = new Customer("HI");
+            Customer c = new Customer(1);
             c.Delete();
             c.Save();
-            Assert.Throws<Exception>(() => new Customer("HI"));
+            Assert.Throws<Exception>(() => new Customer(1));
         }
 
         [Test]
@@ -86,9 +86,9 @@ namespace MMABooksTests
         {
             Customer c = new Customer();
             List<Customer> customers = (List<Customer>)c.GetList();
-            Assert.AreEqual(696, customers.Count);
-            Assert.AreEqual(1, customers[0].Id);
-            Assert.AreEqual("Molunguri, A", customers[0].Name);
+            Assert.AreEqual(349, customers.Count);
+            Assert.AreEqual(157, customers[0].CustomerId);
+            Assert.AreEqual("Abeyatunge, Derek", customers[0].Name);
         }
 
         [Test]
@@ -113,14 +113,14 @@ namespace MMABooksTests
         public void TestInvalidPropertySet()
         {
             Customer c = new Customer();
-            Assert.Throws<ArgumentOutOfRangeException>(() => c.Name = "hgoaigiogifjpisgj");
+            Assert.Throws<ArgumentOutOfRangeException>(() => c.Name = "hgoaigiogifjgfhaljkfganlfggjiakljtglarkjtglkjlakdjfgairjkelangkldavmnaljgnkdiahjigjljgakjgkldjgkajglkgjalksjlsjklgjalkdgjsdklpisgj");
         }
 
         [Test]
         public void TestConcurrencyIssue()
         {
-            Customer c1 = new Customer("Bob Joe");
-            Customer c2 = new Customer("Bob Joe");
+            Customer c1 = new Customer(1);
+            Customer c2 = new Customer(1);
 
             c1.Name = "Updated first";
             c1.Save();

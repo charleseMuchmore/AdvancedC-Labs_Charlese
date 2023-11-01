@@ -10,34 +10,15 @@ namespace MMABooksBusiness
 {
     public class Product : BaseBusiness
     {
-        //this Id property needs some more accurate validation...
-        public int Id
+        public int ProductId
         {
             get
             {
                 return ((ProductProps)mProps).ProductId;
             }
-
-            set
-            {
-/*                if (!(value == ((ProductProps)mProps).ProductId)) //if value is not a dupe
-                {
-                    if (value >= 1 && value <= 2)
-                    {
-                        mRules.RuleBroken("Id", false);
-                        ((ProductProps)mProps).ProductId = value;
-                        mIsDirty = true;
-                    }
-
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException("ProductId must be no more than 2 characters long.");
-                    }
-                }*/
-            }
         }
 
-        public string Code
+        public string ProductCode
         {
             get
             {
@@ -48,20 +29,97 @@ namespace MMABooksBusiness
             {
                 if (!(value == ((ProductProps)mProps).ProductCode))
                 {
-                    if (value.Trim().Length >= 1 && value.Trim().Length <= 4)
+                    if (value.Trim().Length >= 1 && value.Trim().Length <= 10)
                     {
-                        mRules.RuleBroken("Code", false);
+                        mRules.RuleBroken("ProductCode", false);
                         ((ProductProps)mProps).ProductCode = value;
                         mIsDirty = true;
                     }
 
                     else
                     {
-                        throw new ArgumentOutOfRangeException("Code must be no more than 4 characters long.");
+                        throw new ArgumentOutOfRangeException("ProductCode must be no more than 10 characters long.");
                     }
                 }
             }
         }
+
+        public string Description
+        {
+            get
+            {
+                return ((ProductProps)mProps).Description;
+            }
+
+            set
+            {
+                if (!(value == ((ProductProps)mProps).Description))
+                {
+                    if (value.Trim().Length >= 1 && value.Trim().Length <= 50)
+                    {
+                        mRules.RuleBroken("Description", false);
+                        ((ProductProps)mProps).Description = value;
+                        mIsDirty = true;
+                    }
+
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException("Description must be no more than 50 characters long.");
+                    }
+                }
+            }
+        }
+
+        public decimal UnitPrice
+        {
+            get
+            {
+                return ((ProductProps)mProps).UnitPrice;
+            }
+            set
+            {
+                if (!(value == ((ProductProps)mProps).UnitPrice))
+                {
+                    if (value <= 10 && value >= 4)
+                    {
+                        mRules.RuleBroken("UnitPrice", false);
+                        ((ProductProps)mProps).UnitPrice = value;
+                        mIsDirty = true;
+                    }
+
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException("UnitPrice must be between 4 and 10");
+                    }
+                }
+            }
+        }
+
+        public int OnHandQuantity
+        {
+            get
+            {
+                return ((ProductProps)mProps).OnHandQuantity;
+            }
+            set
+            {
+                if (!(value == ((ProductProps)mProps).OnHandQuantity))
+                {
+                    if (value >= 0)
+                    {
+                        mRules.RuleBroken("OnHandQuantity", false);
+                        ((ProductProps)mProps).OnHandQuantity = value;
+                        mIsDirty = true;
+                    }
+
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException("OnHandQuantity must be positive integer");
+                    }
+                }
+            }
+        }
+
 
         public override object GetList()
         {
@@ -85,8 +143,10 @@ namespace MMABooksBusiness
 
         protected override void SetRequiredRules()
         {
-            mRules.RuleBroken("Id", true);
-            mRules.RuleBroken("Code", true);
+            mRules.RuleBroken("ProductCode", true);
+            mRules.RuleBroken("Description", true);
+            mRules.RuleBroken("UnitPrice", true);
+            mRules.RuleBroken("OnHandQuantity", true);
         }
 
         protected override void SetUp()
@@ -103,10 +163,11 @@ namespace MMABooksBusiness
         {
         }
 
-        public Product(string key)
+        public Product(int key)
             : base(key)
         {
         }
+
 
         private Product(ProductProps props)
             : base(props)

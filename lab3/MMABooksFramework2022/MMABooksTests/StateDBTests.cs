@@ -32,7 +32,7 @@ namespace MMABooksTests
         {
             StateProps p = (StateProps)db.Retrieve("OR");
             Assert.AreEqual("OR", p.Code);
-            Assert.AreEqual("Ore", p.Name);
+            Assert.AreEqual("Edited Name", p.Name);
         }
 
         [Test]

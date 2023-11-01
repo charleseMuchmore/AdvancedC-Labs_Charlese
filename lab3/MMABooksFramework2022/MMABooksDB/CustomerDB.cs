@@ -5,6 +5,7 @@ using MMABooksProps;
 
 using System.Data;
 
+
 // *** I use an "alias" for the ado.net classes throughout my code
 // When I switch to an oracle database, I ONLY have to change the actual classes here
 using DBBase = MMABooksTools.BaseSQLDB;
@@ -21,6 +22,7 @@ namespace MMABooksDB
     {
         public CustomerDB() : base() { }
         public CustomerDB(DBConnection cn) : base(cn) { }
+
         public IBaseProps Create(IBaseProps p)
         {
             int rowsAffected = 0;
@@ -29,23 +31,35 @@ namespace MMABooksDB
             DBCommand command = new DBCommand();
             command.CommandText = "usp_CustomerCreate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("custId", props.CustomerId);
-            command.Parameters.AddWithValue("name_p", props.Name);
-            command.Parameters.AddWithValue("address_p", props.Address);
-            command.Parameters.AddWithValue("city_p", props.City);
-            command.Parameters.AddWithValue("state_p", props.State);
-            command.Parameters.AddWithValue("zipcode_p", props.ZipCode);
+
+            command.Parameters.Add("custID", DBDbType.Int32);
+            command.Parameters.Add("name_p", DBDbType.VarChar);
+            command.Parameters.Add("address_p", DBDbType.VarChar);
+            command.Parameters.Add("city_p", DBDbType.VarChar);
+            command.Parameters.Add("state_p", DBDbType.VarChar);
+            command.Parameters.Add("zipcode_p", DBDbType.VarChar);
+
+            command.Parameters[0].Direction = ParameterDirection.Output;
+            command.Parameters["name_p"].Value = props.Name;
+            command.Parameters["address_p"].Value = props.Address;
+            command.Parameters["city_p"].Value = props.City;
+            command.Parameters["state_p"].Value = props.State;
+            command.Parameters["zipcode_p"].Value = props.ZipCode;
+
+
+
 
             try
             {
                 rowsAffected = RunNonQueryProcedure(command);
                 if (rowsAffected == 1)
                 {
+                    props.CustomerId = (int)command.Parameters[0].Value;
                     props.ConcurrencyID = 1;
                     return props;
                 }
                 else
-                    throw new Exception("Unable to insert record. " + props.GetState());
+                    throw new Exception("Unable to insert record. " + props.ToString());
             }
             catch (Exception e)
             {
@@ -67,9 +81,9 @@ namespace MMABooksDB
             DBCommand command = new DBCommand();
             command.CommandText = "usp_CustomerDelete";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("custId", DBDbType.Int32);
+            command.Parameters.Add("custID", DBDbType.Int32);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
-            command.Parameters["custId"].Value = props.CustomerId;
+            command.Parameters["custID"].Value = props.CustomerId;
             command.Parameters["conCurrId"].Value = props.ConcurrencyID;
 
             try
@@ -106,8 +120,8 @@ namespace MMABooksDB
 
             command.CommandText = "usp_CustomerSelect";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("custId", DBDbType.Int32);
-            command.Parameters["custId"].Value = key.ToString();
+            command.Parameters.Add("custID", DBDbType.Int32);
+            command.Parameters["custID"].Value = (int)key;
 
             try
             {
@@ -181,7 +195,7 @@ namespace MMABooksDB
             command.CommandText = "usp_CustomerUpdate";
             command.CommandType = CommandType.StoredProcedure;
 
-            command.Parameters.Add("customerId", DBDbType.Int32);
+            command.Parameters.Add("custID", DBDbType.Int32);
             command.Parameters.Add("name", DBDbType.VarChar);
             command.Parameters.Add("address", DBDbType.VarChar);
             command.Parameters.Add("city", DBDbType.VarChar);
@@ -189,7 +203,7 @@ namespace MMABooksDB
             command.Parameters.Add("zipcode", DBDbType.VarChar);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
 
-            command.Parameters["customerId"].Value = props.CustomerId;
+            command.Parameters["custID"].Value = props.CustomerId;
             command.Parameters["name"].Value = props.Name;
             command.Parameters["address"].Value = props.Address;
             command.Parameters["city"].Value = props.City;

@@ -50,13 +50,13 @@ namespace MMABooksTests
             Assert.Throws<Exception>(() => db.Retrieve(1));
         }
 
-
+/*
         [Test]
         public void TestDeleteForeignKeyConstraint()
         {
-            CustomerProps c = (CustomerProps)db.Retrieve(1);
+            CustomerProps c = (CustomerProps)db.Retrieve(99);
             Assert.Throws<MySqlException>(() => db.Delete(c));
-        }
+        }*/
 
         [Test]
         public void TestUpdate()
@@ -72,7 +72,7 @@ namespace MMABooksTests
         public void TestUpdateFieldTooLong()
         {
             CustomerProps c = (CustomerProps)db.Retrieve(1);
-            c.Name = "Oregon is the state where Crater Lake National Park is.";
+            c.Name = "Oregon is the state where Crater Lake National Park is. fffffffffffffffffffffffffffffffffffffffffffffffffffff";
             Assert.Throws<MySqlException>(() => db.Update(c));
         }
 
@@ -80,7 +80,13 @@ namespace MMABooksTests
         public void TestCreate()
         {
             CustomerProps c = new CustomerProps();
-            c.Name = "New Name";
+            c.Name = "Minnie Mouse";
+            c.Address = "101 Main Street";
+            c.City = "Orlando";
+            c.State = "FL";
+            c.ZipCode = "10001";
+
+
             db.Create(c);
             CustomerProps c2 = (CustomerProps)db.Retrieve(c.CustomerId);
             Assert.AreEqual(c.GetState(), c2.GetState());

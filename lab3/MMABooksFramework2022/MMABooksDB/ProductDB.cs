@@ -14,13 +14,11 @@ using DBParameter = MySql.Data.MySqlClient.MySqlParameter;
 using DBDataReader = MySql.Data.MySqlClient.MySqlDataReader;
 using DBDataAdapter = MySql.Data.MySqlClient.MySqlDataAdapter;
 using DBDbType = MySql.Data.MySqlClient.MySqlDbType;
-using System.Collections.Generic;
 
 namespace MMABooksDB
 {
     public class ProductDB : DBBase, IReadDB, IWriteDB
     {
-
         public ProductDB() : base() { }
         public ProductDB(DBConnection cn) : base(cn) { }
 
@@ -32,17 +30,26 @@ namespace MMABooksDB
             DBCommand command = new DBCommand();
             command.CommandText = "usp_ProductCreate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("ProductCode", props.ProductCode);
-            command.Parameters.AddWithValue("Description", props.Description);
-            command.Parameters.AddWithValue("UnitPrice", props.UnitPrice);
-            command.Parameters.AddWithValue("OnHandQuantity", props.OnHandQuantity);
-    
+
+            command.Parameters.Add("prodID", DBDbType.Int32);
+            command.Parameters.Add("prodCode", DBDbType.VarChar);
+            command.Parameters.Add("description", DBDbType.VarChar);
+            command.Parameters.Add("unit_p", DBDbType.Float);
+            command.Parameters.Add("onhand_q", DBDbType.Int32);
+
+            command.Parameters[0].Direction = ParameterDirection.Output;
+            command.Parameters["prodCode"].Value = props.ProductCode;
+            command.Parameters["description"].Value = props.Description;
+            command.Parameters["unit_p"].Value = props.UnitPrice;
+            command.Parameters["onhand_q"].Value = props.OnHandQuantity;
+
 
             try
             {
                 rowsAffected = RunNonQueryProcedure(command);
                 if (rowsAffected == 1)
                 {
+                    props.ProductId = (int)command.Parameters[0].Value;
                     props.ConcurrencyID = 1;
                     return props;
                 }
@@ -69,9 +76,9 @@ namespace MMABooksDB
             DBCommand command = new DBCommand();
             command.CommandText = "usp_ProductDelete";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("ProductCode", DBDbType.VarChar);
+            command.Parameters.Add("prodID", DBDbType.Int32);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
-            command.Parameters["ProductCode"].Value = props.ProductCode;
+            command.Parameters["prodID"].Value = props.ProductId;
             command.Parameters["conCurrId"].Value = props.ConcurrencyID;
 
             try
@@ -108,8 +115,8 @@ namespace MMABooksDB
 
             command.CommandText = "usp_ProductSelect";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("ProductCode", DBDbType.VarChar);
-            command.Parameters["ProductCode"].Value = key.ToString();
+            command.Parameters.Add("prodID", DBDbType.Int32);
+            command.Parameters["prodID"].Value = (int)key;
 
             try
             {
@@ -180,17 +187,21 @@ namespace MMABooksDB
             ProductProps props = (ProductProps)p;
 
             DBCommand command = new DBCommand();
-            command.CommandText = "usp_StateUpdate";
+            command.CommandText = "usp_ProductUpdate";
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.Add("ProductCode", DBDbType.VarChar);
-            command.Parameters.Add("Description", DBDbType.VarChar);
-            command.Parameters.Add("UnitPrice", DBDbType.Decimal);
-            command.Parameters.Add("OnHandQuantity", DBDbType.Int32);
+
+            command.Parameters.Add("prodID", DBDbType.Int32);
+            command.Parameters.Add("prodCode", DBDbType.VarChar);
+            command.Parameters.Add("description", DBDbType.VarChar);
+            command.Parameters.Add("unit_p", DBDbType.Decimal);
+            command.Parameters.Add("onhand_q", DBDbType.Int32);
             command.Parameters.Add("conCurrId", DBDbType.Int32);
-            command.Parameters["ProductCode"].Value = props.ProductCode;
-            command.Parameters["Description"].Value = props.Description;
-            command.Parameters["UnitPrice"].Value = props.UnitPrice;
-            command.Parameters["OnHandQuantity"].Value = props.OnHandQuantity;
+
+            command.Parameters["prodID"].Value = props.ProductId;
+            command.Parameters["prodCode"].Value = props.ProductCode;
+            command.Parameters["description"].Value = props.Description;
+            command.Parameters["unit_p"].Value = props.UnitPrice;
+            command.Parameters["onhand_q"].Value = props.OnHandQuantity;
             command.Parameters["conCurrId"].Value = props.ConcurrencyID;
 
             try
@@ -198,6 +209,7 @@ namespace MMABooksDB
                 rowsAffected = RunNonQueryProcedure(command);
                 if (rowsAffected == 1)
                 {
+                    props.ProductId = (int)command.Parameters[0].Value;
                     props.ConcurrencyID++;
                     return true;
                 }
