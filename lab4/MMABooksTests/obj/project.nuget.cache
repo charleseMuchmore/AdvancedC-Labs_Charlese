@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zkvanS3/BZ52jYKzlPXADyFyQTmAXdnn6V5JzAZf/A9rj4ZWSFTBnkNdAjyui/iAYpxSI+Qw2Bh94cW0l/phdg==",
+  "dgSpecHash": "xcu3Gg2ab7hVGIhXIrHuEyJH11c6/dO93v1lHazsF/lbFPaWQVlPeBegaD4ywdeeyNT9N/fz/fqIcGwomg92nw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\charl\\OneDrive\\Desktop\\C#\\Lab4 - EFCoreImplementation_StarterFiles\\Lab4 - EFCoreImplementation_StarterFiles\\MMABooksEFCore2022\\MMABooksTests\\MMABooksTests.csproj",
+  "projectFilePath": "C:\\Users\\charl\\OneDrive\\Desktop\\C#\\labs\\lab4\\MMABooksTests\\MMABooksTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\charl\\.nuget\\packages\\google.protobuf\\3.19.4\\google.protobuf.3.19.4.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\k4os.compression.lz4\\1.2.6\\k4os.compression.lz4.1.2.6.nupkg.sha512",
