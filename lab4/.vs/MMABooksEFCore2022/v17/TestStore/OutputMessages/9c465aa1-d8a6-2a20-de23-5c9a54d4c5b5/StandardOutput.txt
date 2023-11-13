@@ -144,8 +144,8 @@
 { CustomerId = 190, Name = Yarbro, Joh, State = OH, StateName = Ohio }
 { CustomerId = 16, Name = Kandregula, Howard, State = OK, StateName = Oklahoma }
 { CustomerId = 161, Name = Smith, Mark, State = OK, StateName = Oklahoma }
-{ CustomerId = 144, Name = Erpenbach, Lee, State = OR, StateName = Ore }
-{ CustomerId = 12, Name = Swenson, Vi, State = OR, StateName = Ore }
+{ CustomerId = 144, Name = Erpenbach, Lee, State = OR, StateName = Origon }
+{ CustomerId = 12, Name = Swenson, Vi, State = OR, StateName = Origon }
 { CustomerId = 184, Name = Rogers, Pete, State = PA, StateName = Pennsylvania }
 { CustomerId = 59, Name = Perlman, Lk, State = PA, StateName = Pennsylvania }
 { CustomerId = 11, Name = Patwardhan, Joh, State = PA, StateName = Pennsylvania }
