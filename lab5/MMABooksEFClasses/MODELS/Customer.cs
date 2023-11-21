@@ -17,7 +17,7 @@ namespace MMABooksEFClasses.MODELS
         public string State { get; set; } = null!;
         public string ZipCode { get; set; } = null!;
 
-        public virtual State StateNavigation { get; set; } = null!;
+        public virtual State? StateNavigation { get; set; } = null!;
         public virtual ICollection<Invoice> Invoices { get; set; }
     }
 }
