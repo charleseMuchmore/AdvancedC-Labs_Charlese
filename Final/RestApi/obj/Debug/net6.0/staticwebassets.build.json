@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "vDMa1SO7uBcWtu+D96pUf63S8YwnOz8xw2TtnBKjQWw=",
+  "Source": "RestApi",
+  "BasePath": "_content/RestApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\charl\\OneDrive\\Desktop\\C#\\labs\\Final\\FinalProject\\FinalProject.csproj",
+      "Version": 2,
+      "Source": "FinalProject",
+      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
