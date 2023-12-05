@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
  *        
  *      Scaffold-DbContext "server=127.0.0.1;uid=root;pwd=YOURPASSWORD;database=MMABooks" MySql.Data.EntityFrameworkCore -OutputDir Models -context MMABooksContext -project MMABooksEFClasses -startupproject MMABooksEFClasses -force
  */
-namespace MMABooksEFClasses
+namespace FinalProject
 {
     public class ConfigDB
     {
