@@ -1,0 +1,17 @@
+Write nUnit tests to assure yourself that you understand the classes and the logic that you'll need to implement your use case.  
+
+If you are implementing the "Browse Recipes" use case, for example, you'll need to be able to 
+
+-retrieve all of the information in your UI mock-up for all of the recipes in the system 
+-retrieve all of the details for one recipe based on the primary key of the recipe
+
+
+In my case:
+-retrieve some app config information for the layout
+   -colors
+   -logo
+   -backgrouncd image
+   -home page text
+   -brewery name?
+   -default units?
+-check userlogin information against the database to see if its a valid user 

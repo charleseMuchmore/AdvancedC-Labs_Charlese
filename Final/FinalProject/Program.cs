@@ -1,6 +1,22 @@
+﻿using FinalProject.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Add cors policy - in a production app lock this down!
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+            .WithMethods("POST", "PUT", "DELETE", "GET", "OPTIONS")
+            .AllowAnyHeader();
+        });
+});
+
+// Adding the dbContext to the service
+builder.Services.AddDbContext<BitsContext>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -18,8 +34,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
