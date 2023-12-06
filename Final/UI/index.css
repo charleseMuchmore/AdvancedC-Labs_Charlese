@@ -1,0 +1,63 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+.b {
+    border: 1px solid green;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.m-l {
+    margin-left: 2vh;
+}
+
+.logo {
+    height: 65px;
+    width: 65px;
+}
+
+.flex {
+    display: flex;
+}
+
+.btn {
+    background-color: white;
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+.btn:hover {
+    background-color: lightgray;
+}
+
+.btn-container {
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 80%;
+}
+
+form {
+    height: auto;
+    width: 25%;
+    margin: auto;
+    border: 1px black solid;
+    border-radius: 2px;
+    padding-bottom: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+form .form-group {
+    /* background-color: lightgray; */
+    height: auto;
+    /* border: 1px solid black;
+    border-radius: 2px; */
+}
